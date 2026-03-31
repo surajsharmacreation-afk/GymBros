@@ -1,0 +1,43 @@
+.ai-wrapper {
+  padding: 100px 20px;
+  color: white;
+}
+
+.chat-box {
+  max-width: 800px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-msg {
+  padding: 12px;
+  border-radius: 12px;
+  max-width: 70%;
+}
+
+.chat-msg.user {
+  background: #7c7cff;
+  align-self: flex-end;
+}
+
+.chat-msg.ai {
+  background: rgba(255,255,255,0.1);
+}
+
+.chat-input {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.chat-input input {
+  padding: 10px;
+  width: 300px;
+}
+
+.chat-input button {
+  padding: 10px 20px;
+}

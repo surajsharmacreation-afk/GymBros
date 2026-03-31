@@ -1,0 +1,59 @@
+/* ✅ GLOBAL MOBILE SAFETY */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* ✅ Prevent text overflow */
+p, h1, h2, h3, span {
+  word-wrap: break-word;
+}
+
+/* ✅ Images responsive */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+button {
+  min-height: 44px; /* better tap targets */
+}
+
+input {
+  font-size: 16px; /* prevents zoom on iPhone */
+}
+
+@keyframes slideLeft{
+from{
+transform:translateX(-50px);
+opacity:0;
+}
+to{
+transform:translateX(0);
+opacity:1;
+}
+}
+
+@keyframes slideRight{
+from{
+transform:translateX(50px);
+opacity:0;
+}
+to{
+transform:translateX(0);
+opacity:1;
+}
+}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+body{
+font-family:"Poppins",sans-serif;
+}
