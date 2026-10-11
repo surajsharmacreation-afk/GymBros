@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: #06050b;
+  color: #f1f5f9;
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Ambient Moving Glowing Lights */
+body::before {
+  content: '';
+  position: fixed;
+  top: -15%;
+  left: 10%;
+  width: 55vw;
+  height: 55vw;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.18) 0%, rgba(99, 102, 241, 0.08) 50%, transparent 70%);
+  filter: blur(100px);
+  z-index: -1;
+  pointer-events: none;
+  animation: floatOrb 12s ease-in-out infinite alternate;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -15%;
+  right: 10%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.14) 0%, rgba(147, 51, 234, 0.06) 50%, transparent 70%);
+  filter: blur(110px);
+  z-index: -1;
+  pointer-events: none;
+  animation: floatOrb 16s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes floatOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 30px) scale(1.08); }
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+  background: rgba(18, 14, 30, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.glass-panel:hover {
+  border-color: rgba(168, 85, 247, 0.25);
+}
+
+/* Primary Button Glow Effect */
+.glow-btn {
+  background: linear-gradient(135deg, #a855f7, #6366f1);
+  box-shadow: 0 8px 24px -4px rgba(168, 85, 247, 0.5);
+  transition: all 0.25s ease;
+}
+
+.glow-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -4px rgba(168, 85, 247, 0.7);
+}
+
+.glow-btn:active {
+  transform: scale(0.97);
+}
+
+/* Pulse animation for alert boxes */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 15px rgba(234, 179, 8, 0.2); }
+  50% { box-shadow: 0 0 25px rgba(234, 179, 8, 0.4); }
+}
+
+.pulse-alert {
+  animation: pulseGlow 2.5s infinite;
+}

@@ -1,136 +1,61 @@
 const express = require("express");
 const router = express.Router();
-
-const authMiddleware = require("../middleware/auth");
-const upload = require("../middleware/upload");
-const sendEmail = require("../utils/sendEmail");
 const User = require("../models/User");
+const authMiddleware = require("../middleware/auth");
+const sendEmail = require("../utils/sendEmail");
 
+// POST /api/profile/request-plan
+router.post("/request-plan", authMiddleware, async (req, res) => {
+  try {
+    const { planName } = req.body;
 
-/*
-PROFILE COMPLETE (ONBOARDING)
-*/
+    // Database me requestedPlan save karo
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { requestedPlan: planName },
+      { new: true },
+    );
 
-router.put(
-    "/complete",
-    authMiddleware,
-    upload.single("profilePic"),
-    async (req, res) => {
-
-        try {
-
-            const user = await User.findById(req.userId);
-
-            if (!user)
-                return res.status(404).json({
-                    message: "User not found"
-                });
-
-            user.nickname = req.body.nickname;
-            user.age = req.body.age;
-            user.height = req.body.height;
-            user.weight = req.body.weight;
-
-            if (req.file) {
-                user.profilePic = "/uploads/" + req.file.filename;
-            }
-
-            user.isProfileComplete = true;
-
-            await user.save();
-
-            sendEmail(
-                "📊 Profile Completed",
-                `User completed onboarding:
-
-Name: ${user.name}
-Email: ${user.email}
-Nickname: ${user.nickname}
-Age: ${user.age}
-Height: ${user.height}
-Weight: ${user.weight}`
-            );
-
-            res.json({ user });
-
-        } catch (err) {
-
-            console.log(err);
-
-            res.status(500).json({
-                message: "Profile completion failed"
-            });
-
-        }
-
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-);
 
+    // Pehle frontend ko turant response bhej do (no lag!)
+    res.json({
+      message: "Plan request saved successfully",
+      requestedPlan: user.requestedPlan,
+    });
 
-/*
-PROFILE EDIT
-*/
+    // Background me bina delay ke email fire karo
+    setImmediate(() => {
+      sendEmail(
+        "⚡ GymBros: New Membership Plan Request",
+        `Member "${user.name}" (${user.email}) ne "${planName}" request kiya hai.\nPayment desk counter par collect karein aur Admin Panel se 1-click me approve karein.`,
+      );
+    });
+  } catch (err) {
+    console.error("Request plan error:", err);
+    res.status(500).json({ message: "Failed to request plan" });
+  }
+});
 
-router.put(
-    "/edit",
-    authMiddleware,
-    upload.single("profilePic"),
-    async (req, res) => {
+// PUT /api/profile/update - Update Vitals for BMI & Complete Profile
+router.put("/update", authMiddleware, async (req, res) => {
+  try {
+    const { age, height, weight } = req.body;
+    // isProfileComplete ko true set kar rahe hain
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { age, height, weight, isProfileComplete: true },
+      { new: true },
+    ).populate("membershipPlan");
 
-        try {
-
-            const user = await User.findById(req.userId);
-
-            if (!user)
-                return res.status(404).json({
-                    message: "User not found"
-                });
-
-            if (req.body.nickname)
-                user.nickname = req.body.nickname;
-
-            if (req.body.age)
-                user.age = req.body.age;
-
-            if (req.body.height)
-                user.height = req.body.height;
-
-            if (req.body.weight)
-                user.weight = req.body.weight;
-
-            if (req.file)
-                user.profilePic = "/uploads/" + req.file.filename;
-
-            await user.save();
-
-            sendEmail(
-                "✏️ Profile Updated",
-                `User updated profile:
-
-Name: ${user.name}
-Email: ${user.email}
-Nickname: ${user.nickname}
-Age: ${user.age}
-Height: ${user.height}
-Weight: ${user.weight}`
-            );
-
-            res.json({
-                message: "Profile updated successfully",
-                user
-            });
-
-        } catch (err) {
-
-            console.log(err);
-
-            res.status(500).json({
-                message: "Profile update failed"
-            });
-
-        }
-
-    }
-);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ message: "Profile vitals updated successfully", user });
+  } catch (err) {
+    console.error("Update profile error:", err);
+    res.status(500).json({ message: "Failed to update profile vitals" });
+  }
+});
 
 module.exports = router;
